@@ -13,12 +13,12 @@ import (
 	"github.com/jamesliu96/xigma"
 )
 
+const DIRECTIVE_SERVER = "s"
+const DIRECTIVE_CLIENT = "c"
+
 func printUsage() {
 	fmt.Fprintf(os.Stderr, "usage: xm %s <ADDRESS> [DIRECTORY]\n       xm %s <URL>\n", DIRECTIVE_SERVER, DIRECTIVE_CLIENT)
 }
-
-const DIRECTIVE_SERVER = "server"
-const DIRECTIVE_CLIENT = "client"
 
 const HEADER_SERVER = "x-xigma-server"
 const HEADER_CLIENT = "x-xigma-client"
@@ -29,8 +29,13 @@ func main() {
 		return
 	}
 	directive := os.Args[1]
+	addr := os.Args[2]
 	if directive == DIRECTIVE_SERVER {
 		http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+			if r.Method != http.MethodPost {
+				http.Redirect(rw, r, "https://github.com/jamesliu96/xigma", http.StatusMovedPermanently)
+				return
+			}
 			clientPublicString := r.Header.Get(HEADER_CLIENT)
 			if len(clientPublicString) == 0 {
 				rw.WriteHeader(http.StatusBadRequest)
@@ -103,13 +108,13 @@ func main() {
 					rw.WriteHeader(http.StatusInternalServerError)
 					return
 				}
-				if err := xigma.Encrypt(buf, rw, int64(buf.Len()), shared); err != nil {
+				if err := xigma.Encrypt(buf, rw, shared, int64(buf.Len())); err != nil {
 					rw.WriteHeader(http.StatusInternalServerError)
 				}
 			} else {
 				size := fi.Size()
 				if size > 0 {
-					if err := xigma.Encrypt(f, rw, size, shared); err != nil {
+					if err := xigma.Encrypt(f, rw, shared, size); err != nil {
 						rw.WriteHeader(http.StatusInternalServerError)
 					}
 				} else {
@@ -117,9 +122,9 @@ func main() {
 				}
 			}
 		})
-		log.Fatalln(http.ListenAndServe(os.Args[2], nil))
+		log.Fatalln(http.ListenAndServe(addr, nil))
 	} else if directive == DIRECTIVE_CLIENT {
-		req, err := http.NewRequest("POST", os.Args[2], nil)
+		req, err := http.NewRequest(http.MethodPost, addr, nil)
 		if err != nil {
 			log.Fatalln(err)
 		}

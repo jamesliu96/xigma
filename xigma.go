@@ -10,16 +10,11 @@ import (
 	"golang.org/x/crypto/curve25519"
 )
 
-const DefaultSec = 5
-
-func randBytes(size int) (buf []byte, err error) {
-	buf = make([]byte, size)
-	_, err = rand.Read(buf)
-	return
-}
+const DefaultSec = 6
 
 func Pair() (private, public []byte, err error) {
-	private, err = randBytes(curve25519.ScalarSize)
+	private = make([]byte, curve25519.ScalarSize)
+	_, err = rand.Read(private)
 	if err != nil {
 		return
 	}
@@ -40,7 +35,7 @@ func init() {
 	headersize = int64(binary.Size(header))
 }
 
-func Encrypt(r io.Reader, w io.Writer, filesize int64, pass []byte) (err error) {
+func Encrypt(r io.Reader, w io.Writer, pass []byte, filesize int64) (err error) {
 	size := int64(metasize + headersize + filesize)
 	err = binary.Write(w, binary.BigEndian, &size)
 	if err != nil {
