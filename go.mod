@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/jamesliu96/geheim v1.18.4
-	github.com/jamesliu96/xp v1.0.2
+	github.com/jamesliu96/xp v1.0.3
 )
 
 require (
