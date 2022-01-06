@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/jamesliu96/xigma"
+	"github.com/jamesliu96/xp"
 )
 
 const DIRECTIVE_SERVER = "s"
@@ -46,13 +47,13 @@ func main() {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			serverPrivate, serverPublic, err := xigma.Pair()
+			serverPrivate, serverPublic, err := xp.P()
 			if err != nil {
 				rw.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			rw.Header().Set(HEADER_SERVER, base64.StdEncoding.EncodeToString(serverPublic))
-			shared, err := xigma.Share(serverPrivate, clientPublic)
+			shared, err := xp.X(serverPrivate, clientPublic)
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
@@ -128,7 +129,7 @@ func main() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		clientPrivate, clientPublic, err := xigma.Pair()
+		clientPrivate, clientPublic, err := xp.P()
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -143,7 +144,7 @@ func main() {
 			if err != nil {
 				log.Fatalln(err)
 			}
-			shared, err := xigma.Share(clientPrivate, serverPublic)
+			shared, err := xp.X(clientPrivate, serverPublic)
 			if err != nil {
 				log.Fatalln(err)
 			}
