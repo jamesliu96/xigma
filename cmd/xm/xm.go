@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"sort"
@@ -14,11 +15,18 @@ import (
 	"github.com/jamesliu96/xp"
 )
 
+const app = "xm"
+
+var (
+	gitTag = "*"
+	gitRev = "*"
+)
+
 const DIRECTIVE_SERVER = "s"
 const DIRECTIVE_CLIENT = "c"
 
 func printUsage() {
-	fmt.Fprintf(os.Stderr, "usage: xm %s <ADDRESS> [DIRECTORY]\n       xm %s <URL>\n", DIRECTIVE_SERVER, DIRECTIVE_CLIENT)
+	fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s %s <address> [directory]\n       %s %s <uri>\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
 }
 
 const HEADER_SERVER = "x-xigma-server"
@@ -34,7 +42,7 @@ func main() {
 	if directive == DIRECTIVE_SERVER {
 		http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {
-				http.Redirect(rw, r, "https://github.com/jamesliu96/xigma", http.StatusMovedPermanently)
+				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
 			clientPublicString := r.Header.Get(HEADER_CLIENT)

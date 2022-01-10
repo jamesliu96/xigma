@@ -3,8 +3,8 @@ module github.com/jamesliu96/xigma
 go 1.17
 
 require (
-	github.com/jamesliu96/geheim v1.18.4
-	github.com/jamesliu96/xp v1.0.3
+	github.com/jamesliu96/geheim v1.18.5
+	github.com/jamesliu96/xp v1.0.4
 )
 
 require (
