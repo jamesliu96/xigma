@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/jamesliu96/xigma"
 	"github.com/jamesliu96/xp"
@@ -104,18 +103,13 @@ func main() {
 					return
 				}
 				sort.Slice(des, func(i, j int) bool { return des[i].Name() < des[j].Name() })
-				var sb strings.Builder
+				buf := new(bytes.Buffer)
 				for _, de := range des {
 					suffix := ""
 					if de.IsDir() {
 						suffix = "/"
 					}
-					sb.WriteString(fmt.Sprintf("%s%s\n", de.Name(), suffix))
-				}
-				buf := new(bytes.Buffer)
-				if _, err := buf.WriteString(sb.String()); err != nil {
-					rw.WriteHeader(http.StatusInternalServerError)
-					return
+					buf.WriteString(fmt.Sprintf("%s%s\n", de.Name(), suffix))
 				}
 				if err := xigma.Encrypt(buf, rw, shared, int64(buf.Len())); err != nil {
 					rw.WriteHeader(http.StatusInternalServerError)
