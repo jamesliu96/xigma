@@ -26,7 +26,7 @@ const DIRECTIVE_SERVER = "s"
 const DIRECTIVE_CLIENT = "c"
 
 func printUsage() {
-	fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s %s <address> [directory]\n       %s %s <uri>\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
+	fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s %s <addr> [dir] # server\n       %s %s <uri>        # client\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
 }
 
 const HEADER_SERVER = "x-xigma-server"
