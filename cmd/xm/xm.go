@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"math"
@@ -24,7 +24,7 @@ var (
 const DIRECTIVE_SERVER = "s"
 const DIRECTIVE_CLIENT = "c"
 
-func printUsage() {
+func usage() {
 	fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s %s <addr> [dir] # server\n       %s %s <uri>        # client\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
 }
 
@@ -33,7 +33,7 @@ const HEADER_CLIENT = "x-xigma-client"
 
 func main() {
 	if len(os.Args) < 3 {
-		printUsage()
+		usage()
 		return
 	}
 	directive := os.Args[1]
@@ -44,32 +44,32 @@ func main() {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			clientPublicString := r.Header.Get(HEADER_CLIENT)
-			if len(clientPublicString) == 0 {
+			clientPubString := r.Header.Get(HEADER_CLIENT)
+			if len(clientPubString) == 0 {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			clientPublic, err := base64.StdEncoding.DecodeString(clientPublicString)
+			clientPub, err := hex.DecodeString(clientPubString)
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			serverPrivate, serverPublic, err := xp.P()
+			serverPriv, serverPub, err := xp.P()
 			if err != nil {
 				rw.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			rw.Header().Set(HEADER_SERVER, base64.StdEncoding.EncodeToString(serverPublic))
-			shared, err := xp.X(serverPrivate, clientPublic)
+			rw.Header().Set(HEADER_SERVER, hex.EncodeToString(serverPub))
+			shared, err := xp.X(serverPriv, clientPub)
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			directory := "."
+			dir := "."
 			if len(os.Args) > 3 {
-				directory = os.Args[3]
+				dir = os.Args[3]
 			}
-			f, err := os.Open(directory + r.URL.Path)
+			f, err := os.Open(dir + r.URL.Path)
 			if err != nil {
 				if os.IsNotExist(err) {
 					rw.WriteHeader(http.StatusNotFound)
@@ -92,6 +92,7 @@ func main() {
 				}
 				return
 			}
+			log.Println(clientPubString, f.Name())
 			if fi.IsDir() {
 				des, err := f.ReadDir(-1)
 				if err != nil {
@@ -130,31 +131,36 @@ func main() {
 		req, err := http.NewRequest(http.MethodPost, addr, nil)
 		if err != nil {
 			log.Fatalln(err)
+			return
 		}
-		clientPrivate, clientPublic, err := xp.P()
+		clientPriv, clientPub, err := xp.P()
 		if err != nil {
 			log.Fatalln(err)
+			return
 		}
-		req.Header.Set(HEADER_CLIENT, base64.StdEncoding.EncodeToString(clientPublic))
+		req.Header.Set(HEADER_CLIENT, hex.EncodeToString(clientPub))
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			log.Fatalln(err)
+			return
 		}
 		if resp.StatusCode == http.StatusOK {
-			serverPublicString := resp.Header.Get(HEADER_SERVER)
-			serverPublic, err := base64.StdEncoding.DecodeString(serverPublicString)
+			serverPubString := resp.Header.Get(HEADER_SERVER)
+			serverPub, err := hex.DecodeString(serverPubString)
 			if err != nil {
 				log.Fatalln(err)
+				return
 			}
-			shared, err := xp.X(clientPrivate, serverPublic)
+			shared, err := xp.X(clientPriv, serverPub)
 			if err != nil {
 				log.Fatalln(err)
+				return
 			}
 			if err := xigma.Decrypt(resp.Body, os.Stdout, shared); err != nil {
 				log.Fatalln(err)
 			}
 		}
 	} else {
-		printUsage()
+		usage()
 	}
 }
