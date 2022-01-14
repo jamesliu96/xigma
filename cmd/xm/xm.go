@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"crypto/hmac"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"log"
 	"math"
@@ -21,24 +23,49 @@ var (
 	gitRev = "*"
 )
 
+var fKeyHex = flag.String("x", "", "key `hex` [server: pub, client: priv]")
+
 const DIRECTIVE_SERVER = "s"
 const DIRECTIVE_CLIENT = "c"
-
-func usage() {
-	fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s %s <addr> [dir] # server\n       %s %s <uri>        # client\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
-}
 
 const HEADER_SERVER = "x-xigma-server"
 const HEADER_CLIENT = "x-xigma-client"
 
 func main() {
-	if len(os.Args) < 3 {
-		usage()
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "%s %s (%s)\nusage: %s [option]... %s <addr> [dir] # server\n       %s [option]... %s <uri>        # client\noptions:\n", app, gitTag, gitRev[:int(math.Min(float64(len(gitRev)), 7))], app, DIRECTIVE_SERVER, app, DIRECTIVE_CLIENT)
+		flag.PrintDefaults()
+	}
+	if len(os.Args) <= 1 {
+		flag.Usage()
 		return
 	}
-	directive := os.Args[1]
-	addr := os.Args[2]
+	flag.Parse()
+	if flag.NArg() < 2 {
+		flag.Usage()
+		return
+	}
+	directive := flag.Arg(0)
+	addr := flag.Arg(1)
+	var keySet bool
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == "x" {
+			keySet = true
+		}
+	})
+	var key []byte
+	if keySet {
+		if k, err := hex.DecodeString(*fKeyHex); err != nil {
+			log.Fatalln(err)
+			return
+		} else {
+			key = k
+		}
+	}
 	if directive == DIRECTIVE_SERVER {
+		if key != nil {
+			log.Println("authorization", hex.EncodeToString(key))
+		}
 		http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 			if r.Method != http.MethodPost {
 				rw.WriteHeader(http.StatusBadRequest)
@@ -54,6 +81,14 @@ func main() {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
 			}
+			if key != nil {
+				if !hmac.Equal(clientPub, key) {
+					log.Println("rejected", hex.EncodeToString(clientPub))
+					rw.WriteHeader(http.StatusUnauthorized)
+					return
+				}
+			}
+			log.Println("resolved", hex.EncodeToString(clientPub))
 			serverPriv, serverPub, err := xp.P()
 			if err != nil {
 				rw.WriteHeader(http.StatusInternalServerError)
@@ -66,8 +101,8 @@ func main() {
 				return
 			}
 			dir := "."
-			if len(os.Args) > 3 {
-				dir = os.Args[3]
+			if flag.NArg() > 2 {
+				dir = flag.Arg(2)
 			}
 			f, err := os.Open(dir + r.URL.Path)
 			if err != nil {
@@ -92,7 +127,6 @@ func main() {
 				}
 				return
 			}
-			log.Println(clientPubString, f.Name())
 			if fi.IsDir() {
 				des, err := f.ReadDir(-1)
 				if err != nil {
@@ -126,6 +160,7 @@ func main() {
 				}
 			}
 		})
+		log.Println("listening on", addr)
 		log.Fatalln(http.ListenAndServe(addr, nil))
 	} else if directive == DIRECTIVE_CLIENT {
 		req, err := http.NewRequest(http.MethodPost, addr, nil)
@@ -133,10 +168,21 @@ func main() {
 			log.Fatalln(err)
 			return
 		}
-		clientPriv, clientPub, err := xp.P()
-		if err != nil {
-			log.Fatalln(err)
-			return
+		var clientPriv, clientPub []byte
+		if key != nil {
+			if pub, err := xp.X(key, nil); err != nil {
+				log.Fatalln(err)
+				return
+			} else {
+				clientPriv, clientPub = key, pub
+			}
+		} else {
+			if priv, pub, err := xp.P(); err != nil {
+				log.Fatalln(err)
+				return
+			} else {
+				clientPriv, clientPub = priv, pub
+			}
 		}
 		req.Header.Set(HEADER_CLIENT, hex.EncodeToString(clientPub))
 		resp, err := http.DefaultClient.Do(req)
@@ -161,6 +207,6 @@ func main() {
 			}
 		}
 	} else {
-		usage()
+		flag.Usage()
 	}
 }

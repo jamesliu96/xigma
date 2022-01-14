@@ -10,17 +10,16 @@ import (
 
 const defaultSec = 6
 
-var metasize, headersize int64
+var headersize int64
 
 func init() {
 	meta := geheim.NewMeta(geheim.HeaderVersion)
 	header, _ := meta.Header()
-	metasize = int64(binary.Size(meta))
-	headersize = int64(binary.Size(header))
+	headersize = int64(binary.Size(meta) + binary.Size(header))
 }
 
 func Encrypt(r io.Reader, w io.Writer, pass []byte, filesize int64) (err error) {
-	size := int64(metasize + headersize + filesize)
+	size := headersize + filesize
 	err = binary.Write(w, binary.BigEndian, &size)
 	if err != nil {
 		return
