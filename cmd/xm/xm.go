@@ -205,6 +205,9 @@ func main() {
 			if err := xigma.Decrypt(resp.Body, os.Stdout, shared); err != nil {
 				log.Fatalln(err)
 			}
+		} else {
+			log.Fatalln(resp.Status)
+			return
 		}
 	} else {
 		flag.Usage()
