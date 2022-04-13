@@ -1,7 +1,7 @@
 github.com/jamesliu96/geheim v1.19.2 h1:YXuW48P5o11VO2lhLQGtzd9U/EJIgoir0AY6cOJd248=
 github.com/jamesliu96/geheim v1.19.2/go.mod h1:YQOMSEMyWH1x0d/4nuFrmjPDkTJfLTHHfnf2QOWXkqo=
-github.com/jamesliu96/xp v1.2.1 h1:YhOt3QAiCqeg/d6PWnZYBgIdv75GbfTQyidD3VO+obY=
-github.com/jamesliu96/xp v1.2.1/go.mod h1:4JUHXw0Fzfgzr9fr1av+fJevOdxM6ypqfHCKE5yBIFg=
+github.com/jamesliu96/xp v1.2.2 h1:jC8vF1ls4zZ58sEVzbu49nQnV3Za+SCwQuIZ2iWA8y4=
+github.com/jamesliu96/xp v1.2.2/go.mod h1:FOaAwQR75+3ity0OOybGeaihGABruD5K4AS1P3tAdRg=
 golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 h1:kUhD7nTDoI3fVd9G4ORWrbV5NY0liEs/Jg2pv5f+bBA=
 golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
 golang.org/x/sys v0.0.0-20220412211240-33da011f77ad h1:ntjMns5wyP/fN65tdBD4g8J5w8n015+iIIs9rtjXkY0=
