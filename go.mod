@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/jamesliu96/geheim v1.20.0
-	github.com/jamesliu96/xp v1.2.6
+	github.com/jamesliu96/xp v1.3.1
 	golang.org/x/term v0.0.0-20220722155259-a9ba230a4035
 )
 
