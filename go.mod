@@ -1,6 +1,6 @@
 module github.com/jamesliu96/xigma
 
-go 1.18
+go 1.19
 
 require (
 	github.com/jamesliu96/geheim v1.20.0
