@@ -40,6 +40,7 @@ if [[ $1 = "-build" ]]; then
     "linux mips64le"
     "linux riscv64"
     "linux s390x"
+    "linux loong64"
     # "netbsd 386"
     # "netbsd amd64"
     # "netbsd arm"
