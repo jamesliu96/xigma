@@ -1,10 +1,8 @@
-github.com/jamesliu96/geheim v1.20.1 h1:3ZX1oOrVB1kYErAFFc/FyQw0jxG/wWbJTaqFM+s+zy8=
-github.com/jamesliu96/geheim v1.20.1/go.mod h1:+7xjaYKapP3ScVfdyHDK8XvwUbu1zY3EdqdV0LOA6yQ=
-github.com/jamesliu96/xp v1.3.2 h1:zR5kOrsIdndjl5blJrf+8+3O5aBDXBVztFD+pz6R4Y4=
-github.com/jamesliu96/xp v1.3.2/go.mod h1:qk7bYeriORnLbN3TjU1aV+Qf5deTJ6h7nVYf7hUOD7U=
-golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be h1:fmw3UbQh+nxngCAHrDCCztao/kbYFnWjoqop8dHx05A=
-golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
-golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec h1:BkDtF2Ih9xZ7le9ndzTA7KJow28VbQW3odyk/8drmuI=
-golang.org/x/sys v0.0.0-20220928140112-f11e5e49a4ec/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+github.com/jamesliu96/geheim v1.20.4 h1:XTnDemY9sHt2XUSXUcB3erhSWbMSHYBKn7tlND260EM=
+github.com/jamesliu96/geheim v1.20.4/go.mod h1:w1dwIDQqERSrt8VN4aMckkLj59qv2ZYQHDd6d2okURs=
+golang.org/x/crypto v0.0.0-20221012134737-56aed061732a h1:NmSIgad6KjE6VvHciPZuNRTKxGhlPfD6OA87W/PLkqg=
+golang.org/x/crypto v0.0.0-20221012134737-56aed061732a/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+golang.org/x/sys v0.0.0-20221013171732-95e765b1cc43 h1:OK7RB6t2WQX54srQQYSXMW8dF5C6/8+oA/s5QBmmto4=
+golang.org/x/sys v0.0.0-20221013171732-95e765b1cc43/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20220919170432-7a66f970e087 h1:tPwmk4vmvVCMdr98VgL4JH+qZxPL8fqlUOHnyOM8N3w=
 golang.org/x/term v0.0.0-20220919170432-7a66f970e087/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=

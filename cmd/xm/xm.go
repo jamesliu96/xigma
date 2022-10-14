@@ -12,8 +12,8 @@ import (
 	"os"
 	"sort"
 
+	"github.com/jamesliu96/geheim"
 	"github.com/jamesliu96/xigma"
-	"github.com/jamesliu96/xp"
 )
 
 const app = "xm"
@@ -89,13 +89,13 @@ func main() {
 				}
 			}
 			log.Println("resolved", hex.EncodeToString(clientPub))
-			serverPriv, serverPub, err := xp.P()
+			serverPriv, serverPub, err := geheim.P()
 			if err != nil {
 				rw.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 			rw.Header().Set(HEADER_SERVER, hex.EncodeToString(serverPub))
-			shared, err := xp.X(serverPriv, clientPub)
+			shared, err := geheim.X(serverPriv, clientPub)
 			if err != nil {
 				rw.WriteHeader(http.StatusBadRequest)
 				return
@@ -170,14 +170,14 @@ func main() {
 		}
 		var clientPriv, clientPub []byte
 		if key != nil {
-			if pub, err := xp.X(key, nil); err != nil {
+			if pub, err := geheim.X(key, nil); err != nil {
 				log.Fatalln(err)
 				return
 			} else {
 				clientPriv, clientPub = key, pub
 			}
 		} else {
-			if priv, pub, err := xp.P(); err != nil {
+			if priv, pub, err := geheim.P(); err != nil {
 				log.Fatalln(err)
 				return
 			} else {
@@ -197,7 +197,7 @@ func main() {
 				log.Fatalln(err)
 				return
 			}
-			shared, err := xp.X(clientPriv, serverPub)
+			shared, err := geheim.X(clientPriv, serverPub)
 			if err != nil {
 				log.Fatalln(err)
 				return
