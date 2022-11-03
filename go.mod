@@ -3,7 +3,7 @@ module github.com/jamesliu96/xigma
 go 1.19
 
 require (
-	github.com/jamesliu96/geheim v1.20.5
+	github.com/jamesliu96/geheim v1.20.6
 	golang.org/x/term v0.1.0
 )
 
