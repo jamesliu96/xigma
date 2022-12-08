@@ -12,7 +12,9 @@ echo "# $pkg $tag $rev" 1>&2
 
 if [[ $1 = "-build" ]]; then
   printf "removing \"$outdir\" ... "
-  rm -rf $outdir && echo "SUCCESS" || echo "FAILED"
+  rm -rf $outdir \
+    && echo "SUCCEEDED" \
+    || echo "FAILED"
   ldflags="$ldflags -s -w"
   osarchs=$(go tool dist list)
   set +e
